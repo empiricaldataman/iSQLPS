@@ -17,8 +17,8 @@ CREATE TABLE [dbo].[Server](
        [tcpEnabled] [bit] NULL,
        [tcpName] [varchar](128) NULL,
        [tcpPort] [varchar](15) NULL,
-       [NamedPipesEnabled] [bit] NULL,
-       [NamedPipesName] [varchar](128) NULL,	
+       [NamePipesEnabled] [bit] NULL,
+       [NamePipesName] [varchar](128) NULL,	
        [DefaultFile] [varchar](256) NULL,
        [DefaultLog] [varchar](256) NULL,
        [ErrorLogPath] [varchar](256) NULL,
@@ -56,6 +56,7 @@ DECLARE @bit INT ,
         @char INT ,
         @fieldname VARCHAR(128) ,
         @TableName VARCHAR(128) ,
+        @Schema VARCHAR(128) ,
         @PKCols VARCHAR(1000) ,
         @sql VARCHAR(7000), 
         @UpdateDate VARCHAR(21) ,
@@ -66,6 +67,7 @@ DECLARE @bit INT ,
 
 --You will need to change @TableName to match the table to be audited
 SELECT @TableName = 'Server'
+     , @schema = 'dbo'
 
 -- date and user
 SELECT @UserName = SYSTEM_USER,
@@ -89,7 +91,8 @@ SELECT * INTO #del FROM deleted
 SELECT @PKCols = COALESCE(@PKCols + ' AND', ' ON') + ' i.' + c.COLUMN_NAME + ' = d.' + c.COLUMN_NAME
   FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS pk
  INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE c ON c.TABLE_NAME = pk.TABLE_NAME AND
-       c.CONSTRAINT_NAME = pk.CONSTRAINT_NAME
+       c.CONSTRAINT_NAME = pk.CONSTRAINT_NAME AND
+       c.CONSTRAINT_SCHEMA = pk.CONSTRAINT_SCHEMA
  WHERE pk.TABLE_NAME = @TableName AND
        CONSTRAINT_TYPE = 'PRIMARY KEY'
 
@@ -97,7 +100,8 @@ SELECT @PKCols = COALESCE(@PKCols + ' AND', ' ON') + ' i.' + c.COLUMN_NAME + ' =
 SELECT @PKSelect = COALESCE(@PKSelect+'+','') + '''<' + COLUMN_NAME + '=''+CONVERT(varchar(100),COALESCE(i.' + COLUMN_NAME +',d.' + COLUMN_NAME + '))+''>'''
   FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS pk
  INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE c ON c.TABLE_NAME = pk.TABLE_NAME AND
-       c.CONSTRAINT_NAME = pk.CONSTRAINT_NAME
+       c.CONSTRAINT_NAME = pk.CONSTRAINT_NAME AND
+       c.CONSTRAINT_SCHEMA = pk.CONSTRAINT_SCHEMA
  WHERE pk.TABLE_NAME = @TableName AND
        CONSTRAINT_TYPE = 'PRIMARY KEY'
 
@@ -111,12 +115,14 @@ SELECT @field = 0,
        @maxfield = MAX(ORDINAL_POSITION) 
   FROM INFORMATION_SCHEMA.COLUMNS
  WHERE TABLE_NAME = @TableName
+   AND [TABLE_SCHEMA] = @Schema
 
 WHILE @field < @maxfield
       BEGIN
       SELECT @field = MIN(ORDINAL_POSITION) 
         FROM INFORMATION_SCHEMA.COLUMNS 
        WHERE TABLE_NAME = @TableName AND 
+             [TABLE_SCHEMA] = @Schema AND
              ORDINAL_POSITION > @field
       SELECT @bit = (@field - 1 )% 8 + 1
       SELECT @bit = POWER(2,@bit - 1)
@@ -127,6 +133,7 @@ WHILE @field < @maxfield
          SELECT @fieldname = COLUMN_NAME 
            FROM INFORMATION_SCHEMA.COLUMNS 
           WHERE TABLE_NAME = @TableName AND
+                [TABLE_SCHEMA] = @Schema AND
                 ORDINAL_POSITION = @field
 
          SELECT @sql = 'INSERT dbo.ChangeLog ( '+ CHAR(10)+

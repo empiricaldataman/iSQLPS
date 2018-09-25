@@ -177,7 +177,9 @@ if ($hostName.Length -gt 0) {
 
 if ($InstanceName -notmatch "MSSQLSERVER") { $hostName = "$hostName\$InstanceName"}
 
-$oServer = Get-SQLServer -sqlserver $hostName
+#$oServer = Get-SQLServer -sqlserver $hostName
+[reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.Smo")|out-null
+$oServer = New-Object "Microsoft.SqlServer.Management.Smo.Server" "$hostName"
 
 #$strQuerySql = "SELECT CASE SUBSTRING(CONVERT(nvarchar, ServerProperty ('ProductVersion')), 1, CHARINDEX('.', convert(nvarchar, ServerProperty('ProductVersion')))-1 ) WHEN '11' THEN '2012' WHEN '12' THEN '2014' WHEN '13' THEN '2016' WHEN '14' THEN '2017' WHEN '10' THEN '2008' WHEN '9' THEN '2005' WHEN '8' THEN '2000' WHEN '7' THEN '7.0' END"
 #$strUpsertSql = $strUpsertSql + "'" + (execSQL $sqlNetworkName $instanceName $strQuerySql $tcpPort) + "', "
