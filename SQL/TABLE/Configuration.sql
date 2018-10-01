@@ -21,11 +21,10 @@ CREATE TABLE [dbo].[Configuration](
        [ConfigurationID] [int] IDENTITY(50000,1) NOT NULL
      , [InstanceName] [varchar] (128) NOT NULL
      , [Hostname] [varchar](128) NOT NULL
-     , [ConfigurationID] int NULL
+     , [ConfigurationNumber] int NULL
      , [DisplayName] [varchar](128) NULL
      , [Description] [varchar] (128) NULL 
      , [RunValue] int NULL
-     , [DBCreateDate] [smalldatetime] NULL
      , [CreateDate] [smalldatetime] NOT NULL
      , [UpdateDate] [smalldatetime] NOT NULL
  CONSTRAINT [PK_ConfigurationID] PRIMARY KEY CLUSTERED (
@@ -39,23 +38,19 @@ CREATE UNIQUE NONCLUSTERED INDEX [idx_Configuration_InstanceName_HostName_Config
 (
 	[InstanceName] ASC,
 	[HostName] ASC,
-    [ConfigurationID] ASC
+      [ConfigurationNumber] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-GO
-
-ALTER TABLE [dbo].[Configuration] ADD  CONSTRAINT [DF_Database_Active]  DEFAULT ((0)) FOR [Active]
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ID of the database.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Configuration', @level2type=N'COLUMN',@level2name=N'ConfigurationID'
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ID of the server that hosts the database.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Configuration', @level2type=N'COLUMN',@level2name=N'InstanceName'
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Name of the database.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Configuration', @level2type=N'COLUMN',@level2name=N'HostName'
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Database owner.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Configuration', @level2type=N'COLUMN',@level2name=N'ConfigurationID'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Database owner.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Configuration', @level2type=N'COLUMN',@level2name=N'ConfigurationNumber'
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Database recovery model.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Configuration', @level2type=N'COLUMN',@level2name=N'DisplayName'
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Date and time of the last full backup.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Configuration', @level2type=N'COLUMN',@level2name=N'Description'
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Date and time of the last differential backup.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Configuration', @level2type=N'COLUMN',@level2name=N'RunValue'
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Date and time the database record was created.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Configuration', @level2type=N'COLUMN',@level2name=N'CreateDate'
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Date and time the database record was last updated.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Configuration', @level2type=N'COLUMN',@level2name=N'UpdateDate'
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'On/Off switch to know if the row should be included in queries.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Configuration', @level2type=N'COLUMN',@level2name=N'Active'
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The Configuration table contains information about MS SQL Server instance configuration (sp_configure). Data in this table is collected via PowerShell by executing Configuration.ps1' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Configuration'
 GO
 

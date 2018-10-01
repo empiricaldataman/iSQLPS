@@ -20,7 +20,7 @@ GO
 CREATE PROCEDURE [dbo].[pIU_Configuration]
        @instanceName [varchar] (128)
      , @hostName [varchar] (128)
-     , @ConfigurationID int
+     , @ConfigurationNumber int
      , @DisplayName varchar(128)
      , @Description varchar(128)
      , @RunValue int
@@ -40,24 +40,21 @@ IF NOT EXISTS (SELECT 'TRUE'
    INSERT dbo.[Configuration](
           InstanceName
         , HostName
-        , ConfigurationID
+        , ConfigurationNumber
         , DisplayName
-        , [Description]]
+        , [Description]
         , RunValue
-        , DBCreateDate
         , CreateDate
         , UpdateDate)
    VALUES (
           @instanceName
         , @hostName
-        , @ConfigurationID
+        , @ConfigurationNumber
         , @DisplayName
         , @Description
         , @RunValue
-        , @DBCreateDate
         , GETDATE()
-        , GETDATE()
-        , @Active)
+        , GETDATE())
 END
 ELSE
    BEGIN
@@ -65,14 +62,15 @@ ELSE
                 FROM dbo.[Configuration]
                WHERE InstanceName = @instanceName AND
                      HostName = @HostName AND
-                     ConfigurationID = @ConfigurationID AND
+                     ConfigurationNumer = @ConfigurationNumber AND
                      RunValue != @RunValue)
       BEGIN 
       UPDATE dbo.[Configuration]
          SET RunValue = @RunValue
            , UpdateDate = GETDATE()
        WHERE InstanceName = @instanceName AND
-             HostName = @hostName
+             HostName = @hostName AND
+             ConfigurationNumber = @ConfigurationNumber
    END
    ELSE
       BEGIN
