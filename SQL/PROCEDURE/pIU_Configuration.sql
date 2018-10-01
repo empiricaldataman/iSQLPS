@@ -35,7 +35,8 @@ DECLARE @ERRORCODE int,
 IF NOT EXISTS (SELECT 'TRUE'
                  FROM dbo.[Configuration]
                 WHERE InstanceName = @instanceName AND
-                      HostName = @hostName)
+                      HostName = @hostName AND
+                      ConfigurationNumber = @ConfigurationNumber)
    BEGIN
    INSERT dbo.[Configuration](
           InstanceName
@@ -62,7 +63,7 @@ ELSE
                 FROM dbo.[Configuration]
                WHERE InstanceName = @instanceName AND
                      HostName = @HostName AND
-                     ConfigurationNumer = @ConfigurationNumber AND
+                     ConfigurationNumber = @ConfigurationNumber AND
                      RunValue != @RunValue)
       BEGIN 
       UPDATE dbo.[Configuration]
