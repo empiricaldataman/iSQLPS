@@ -1,2 +1,0 @@
-InstanceName,Host,ServerID,tcpPort
-MSSQLSERVER,REMSYOUNDM101,1049,1433
