@@ -23,10 +23,10 @@ CREATE TABLE [dbo].[Database](
      , [DatabaseName] [varchar](128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
      , [db_id] TINYINT NULL
      , [Owner] [varchar](128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
-     , [DataSpaceUsage] int NULL 
-     , [IndexSpaceUsage] int NULL
-     , [DatabaseSize] int NULL
-     , [SpaceAvailable] int NULL
+     , [DataSpaceUsage] numeric(19,3) NULL 
+     , [IndexSpaceUsage] numeric(19,3) NULL
+     , [DatabaseSize] numeric(19,3) NULL
+     , [SpaceAvailable] numeric(19,3) NULL
      , [PrimaryFilePath] VARCHAR(500) NULL
      , [IsFullTextEnabled] BIT NULL
      , [Collation] [varchar](128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL

@@ -1,6 +1,3 @@
-USE [DPR]
-GO
-
 IF OBJECT_ID(N'dbo.pIU_Database','P') IS NOT NULL
    DROP PROCEDURE pIU_Database
 GO
@@ -30,10 +27,10 @@ CREATE PROCEDURE [dbo].[pIU_Database]
      , @LastDifferentialBackup smalldatetime
      , @LastLogBackup smalldatetime
      , @DBCreateDate smalldatetime
-     , @DataSpaceUsage int NULL
-     , @IndexSpaceUsage int
-     , @DatabaseSize int
-     , @SpaceAvailable int
+     , @DataSpaceUsage numeric(19,3) NULL
+     , @IndexSpaceUsage numeric(19,3) NULL
+     , @DatabaseSize numeric(19,3) NULL
+     , @SpaceAvailable numeric(19,3) NULL
      , @PrimaryFilePath VARCHAR(500)
      , @IsFullTextEnabled BIT
      , @PageVerify VARCHAR(16)
